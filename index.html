@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Aesthetic Calculator</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      overflow: hidden;
+    }
+
+    .calculator {
+      background: rgba(20, 20, 60, 0.35);
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
+      border-radius: 32px;
+      padding: 28px;
+      width: 100%;
+      max-width: 380px;
+      box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.5),
+        inset 0 1px 1px rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .display {
+      background: rgba(10, 10, 40, 0.5);
+      color: #f0f4ff;
+      font-size: 3.2rem;
+      font-weight: 300;
+      text-align: right;
+      padding: 28px 32px;
+      border-radius: 24px;
+      margin-bottom: 28px;
+      min-height: 100px;
+      letter-spacing: -1px;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      box-shadow: inset 0 4px 12px rgba(0,0,0,0.3);
+      overflow-wrap: break-word;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    button {
+      font-size: 1.6rem;
+      font-weight: 500;
+      padding: 22px;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    button::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(145deg, rgba(255,255,255,0.08), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+
+    button:hover::before {
+      opacity: 1;
+    }
+
+    button:active {
+      transform: scale(0.96);
+      box-shadow: inset 0 4px 12px rgba(0,0,0,0.4);
+    }
+
+    .number {
+      background: rgba(60, 60, 120, 0.4);
+      color: #e0e7ff;
+      box-shadow: 
+        inset 0 2px 6px rgba(0,0,0,0.3),
+        0 4px 12px rgba(0,0,0,0.25);
+    }
+
+    .number:hover {
+      background: rgba(80, 80, 140, 0.55);
+    }
+
+    .operator {
+      background: rgba(255, 140, 60, 0.55);
+      color: white;
+      box-shadow: 
+        inset 0 2px 6px rgba(0,0,0,0.3),
+        0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    .operator:hover {
+      background: rgba(255, 160, 80, 0.75);
+    }
+
+    .equals {
+      background: linear-gradient(145deg, #00c853, #00b140);
+      color: white;
+      grid-column: span 2;
+      font-weight: 600;
+      box-shadow: 
+        inset 0 2px 8px rgba(0,0,0,0.3),
+        0 6px 20px rgba(0, 200, 83, 0.35);
+    }
+
+    .equals:hover {
+      background: linear-gradient(145deg, #00e676, #00d448);
+    }
+
+    .clear {
+      background: rgba(239, 83, 80, 0.7);
+      color: white;
+      grid-column: span 2;
+      box-shadow: 
+        inset 0 2px 6px rgba(0,0,0,0.3),
+        0 4px 12px rgba(239,83,80,0.25);
+    }
+
+    .clear:hover {
+      background: rgba(244, 67, 54, 0.85);
+    }
+
+    .backspace {
+      background: rgba(255, 193, 7, 0.6);
+      color: white;
+      box-shadow: 
+        inset 0 2px 6px rgba(0,0,0,0.3),
+        0 4px 12px rgba(255,193,7,0.25);
+    }
+
+    .backspace:hover {
+      background: rgba(255, 213, 79, 0.8);
+    }
+
+    .zero {
+      grid-column: span 2;
+    }
+
+    @media (max-width: 400px) {
+      .calculator { padding: 20px; }
+      .display { font-size: 2.8rem; padding: 24px; }
+      button { font-size: 1.4rem; padding: 18px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="calculator">
+  <div class="display" id="display">0</div>
+  
+  <div class="buttons">
+    <button class="backspace" onclick="backspace()">←</button>
+    <button class="operator" onclick="appendToDisplay('(')">(</button>
+    <button class="operator" onclick="appendToDisplay(')')">)</button>
+    <button class="operator" onclick="appendToDisplay('/')">÷</button>
+
+    <button class="number" onclick="appendToDisplay('7')">7</button>
+    <button class="number" onclick="appendToDisplay('8')">8</button>
+    <button class="number" onclick="appendToDisplay('9')">9</button>
+    <button class="operator" onclick="appendToDisplay('*')">×</button>
+
+    <button class="number" onclick="appendToDisplay('4')">4</button>
+    <button class="number" onclick="appendToDisplay('5')">5</button>
+    <button class="number" onclick="appendToDisplay('6')">6</button>
+    <button class="operator" onclick="appendToDisplay('-')">-</button>
+
+    <button class="number" onclick="appendToDisplay('1')">1</button>
+    <button class="number" onclick="appendToDisplay('2')">2</button>
+    <button class="number" onclick="appendToDisplay('3')">3</button>
+    <button class="operator" onclick="appendToDisplay('+')">+</button>
+
+    <button class="number zero" onclick="appendToDisplay('0')">0</button>
+    <button class="number" onclick="appendToDisplay('.')">.</button>
+    <button class="clear" onclick="clearDisplay()">C</button>
+    <button class="equals" onclick="calculate()">=</button>
+  </div>
+</div>
+
+<script>
+  const display = document.getElementById('display');
+
+  function appendToDisplay(value) {
+    if (display.innerText === '0' && value !== '.') {
+      display.innerText = value;
+    } else {
+      display.innerText += value;
+    }
+  }
+
+  function clearDisplay() {
+    display.innerText = '0';
+  }
+
+  function backspace() {
+    if (display.innerText === 'Error' || display.innerText === '0') {
+      display.innerText = '0';
+      return;
+    }
+    display.innerText = display.innerText.slice(0, -1) || '0';
+  }
+
+  function calculate() {
+    try {
+      let expr = display.innerText
+        .replace(/×/g, '*')
+        .replace(/÷/g, '/');
+
+      if (!/^[0-9.+\-*/(). ]+$/.test(expr)) {
+        display.innerText = 'Error';
+        return;
+      }
+
+      const result = eval(expr);
+      display.innerText = Number.isInteger(result) 
+        ? result.toString()
+        : result.toFixed(8).replace(/\.?0+$/, '');
+    } catch {
+      display.innerText = 'Error';
+    }
+  }
+
+  // Keyboard support
+  document.addEventListener('keydown', e => {
+    e.preventDefault();
+    if (/[0-9]/.test(e.key)) appendToDisplay(e.key);
+    else if (e.key === '.') appendToDisplay('.');
+    else if (e.key === '+') appendToDisplay('+');
+    else if (e.key === '-') appendToDisplay('-');
+    else if (e.key === '*') appendToDisplay('×');
+    else if (e.key === '/') appendToDisplay('÷');
+    else if (e.key === '(') appendToDisplay('(');
+    else if (e.key === ')') appendToDisplay(')');
+    else if (e.key === 'Enter' || e.key === '=') calculate();
+    else if (e.key === 'Backspace') backspace();
+    else if (e.key === 'Escape' || e.key.toLowerCase() === 'c') clearDisplay();
+  });
+</script>
+
+</body>
+      </html>
